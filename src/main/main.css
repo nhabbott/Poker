@@ -1,20 +1,20 @@
 #menuBtn {
 	-fx-background-color: linear-gradient(#0900cf, #06008b);
 	-fx-background-radius: 30;
-    -fx-background-insets: 0;
-    -fx-text-fill: white;
-    -fx-min-width: 80;
-    -fx-min-height: 30;
+	-fx-background-insets: 0;
+	-fx-text-fill: white;
+	-fx-min-width: 80;
+	-fx-min-height: 30;
 }
 
 #menuBtn:hover {
 	-fx-background-color: #383838;
-    -fx-scale-y: 1.1;
+	-fx-scale-y: 1.1;
 }
 
 #menuBtn:pressed {
 	-fx-scale-y: 0.9;
-    -fx-scale-x: 0.9;
+	-fx-scale-x: 0.9;
 }
 
 .root {
