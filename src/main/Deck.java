@@ -15,4 +15,24 @@ public class Deck {
 			deck.add(card);
 		}
 	}
+	
+	// Get a specific card in the deck
+	public Card getCard(int index) {
+		return this.deck.get(index);
+	}
+	
+	// Add a card to the deck
+	public void addCard(Card card) {
+		this.deck.add(card);
+	}
+	
+	// Remove a specific card from the deck
+	public void removeCard(int index) {
+		this.deck.remove(index);
+	}
+	
+	// Get the size of the deck
+	public int getSize() {
+		return this.deck.size();
+	}
 }
