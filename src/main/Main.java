@@ -24,6 +24,7 @@ import javafx.animation.SequentialTransition;
 
 public class Main extends Application {
 
+	// UI preparations
 	private Stage window;
 	private Scene titleScreen, settingsScreen, gameScreen;
 	private ComboBox<String> avatar = new ComboBox<>();
@@ -31,6 +32,13 @@ public class Main extends Application {
 	private RadioButton oneDeck = new RadioButton("1");
 	private RadioButton twoDeck = new RadioButton("2");
 	private RadioButton threeDeck = new RadioButton("3");
+	private Label walletAmt = new Label("");
+	
+	// Game preparations
+	private Deck deck;				// Holds the deck for the game
+	private int deckParam = 1;		// Holds the numOfDecks selected by the user
+	private Hand hand;				// Holds the current hand
+	private int wallet = 200;			// Holds the user's current wallet amount
 	
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -60,6 +68,7 @@ public class Main extends Application {
 			
 			// Create the gameScreen scene
 			BorderPane gamePane = new BorderPane();
+			gamePane.setCenter(getGameScreen());
 			gameScreen = new Scene(gamePane, 600, 400);
 			gameScreen.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
 			
@@ -83,7 +92,16 @@ public class Main extends Application {
 		// Create the play game button
 		Button playBtn = new Button("Play");
 		playBtn.setId("menuBtn");
-		//playBtn.setOnAction(e -> window.setScene(gameScreen));
+		playBtn.setOnAction(e -> {
+			// Generate the deck
+			deck = new Deck(deckParam);
+			
+			// Generate the first hand
+			hand = new Hand(deck);
+			
+			// Change the scene to the game
+			window.setScene(gameScreen);
+		});
 		
 		// Create the settings menu button
 		Button settingsBtn = new Button("Settings");
@@ -110,7 +128,13 @@ public class Main extends Application {
 		// Create the save settings button
 		Button saveBtn = new Button("Save");
 		saveBtn.setId("menuBtn");
-		//saveBtn.setOnAction(e -> window.setScene(settingsScreen));
+		saveBtn.setOnAction(e -> {
+			// Get the selected number of decks
+			RadioButton num = (RadioButton) numOfDecks.getSelectedToggle();
+			
+			// Save the selected option
+			deckParam = Integer.parseInt(num.getText());
+		});
 		
 		// Add the buttons to the HBox and return it
 		box.getChildren().addAll(backBtn, saveBtn);
@@ -151,6 +175,25 @@ public class Main extends Application {
 		// Set container content to center and return it
 		settings.setAlignment(Pos.CENTER);
 		return settings;
+	}
+	
+	private GridPane getGameScreen() {
+		// Create the game GridPane container
+		GridPane game = new GridPane();
+		game.setHgap(5);
+		game.setVgap(5);
+		
+		// Display the cards from the hand
+		
+		// Display the user's avatar
+		
+		// Display the user's wallet amount
+		walletAmt.setText("$" + Integer.toString(wallet));
+		game.add(walletAmt, 0, 0);
+		
+		// Set container content to center and return it
+		game.setAlignment(Pos.CENTER);
+		return game;
 	}
 	
 	// Animation for "big win"

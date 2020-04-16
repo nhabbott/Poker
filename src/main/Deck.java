@@ -35,4 +35,11 @@ public class Deck {
 	public int getSize() {
 		return this.deck.size();
 	}
+	
+	// Print the deck to console
+	public void print() {
+        for (Card d:this.deck) {
+            System.out.println(d.getValue());
+        }
+	}
 }
