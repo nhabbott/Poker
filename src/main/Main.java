@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -88,12 +89,15 @@ public class Main extends Application {
 			
 			// Create the gameScreen scene
 			BorderPane gamePane = new BorderPane();
-			gamePane.setCenter(getGameScreen());
+			gamePane.setCenter(getCards());
+			gamePane.setTop(getWalletAmt());
+			gamePane.setTop(getAvatar());
 			gameScreen = new Scene(gamePane, 600, 400);
 			gameScreen.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
 			
 			// Set the JavaFX window title, icon, and scene. Then show the window
 			window.setTitle("Poker");
+			window.setResizable(false);
 			//window.setIcon(new Image());
 			window.setScene(titleScreen);
 			window.show();
@@ -191,7 +195,8 @@ public class Main extends Application {
 		return settings;
 	}
 	
-	private GridPane getGameScreen() throws FileNotFoundException {
+	// Returns a GridPane with the cards
+	private GridPane getCards() throws FileNotFoundException {
 		// Generate the deck
 		deck = new Deck(deckParam);
 		
@@ -239,15 +244,39 @@ public class Main extends Application {
 		game.add(card4, 3, 0);
 		game.add(card5, 4, 0);
 		
-		// Display the user's avatar
-		
-		// Display the user's wallet amount
-		//walletAmt.setText("$" + Integer.toString(wallet));
-		//game.add(walletAmt, 0, 0);
-		
 		// Set container content to center and return it
 		game.setAlignment(Pos.CENTER);
 		return game;
+	}
+	
+	// Returns a HBox with the wallet amount
+	private HBox getWalletAmt() {
+		// Create the wallet HBox container
+		HBox walletAmtContent = new HBox();
+		
+		// Set the size and the text of the label to the current amount of the user's wallet
+		walletAmt.setText("Wallet: $" + Integer.toString(wallet));
+		walletAmt.setFont(new Font(15));
+		
+		// Add the label to the container
+		walletAmtContent.getChildren().add(walletAmt);
+		
+		// Set container content to center and return it
+		walletAmtContent.setAlignment(Pos.TOP_LEFT);
+		return walletAmtContent;
+	}
+	
+	// Returns a HBox with the chosen avatar
+	private HBox getAvatar() {
+		// Create the avatar HBox container
+		HBox avatar = new HBox();
+		
+		// Add the avatar
+		avatar.getChildren().add(new Label("Testing"));
+		
+		// Set container alignment to center and return it
+		avatar.setAlignment(Pos.TOP_RIGHT);
+		return avatar;
 	}
 	
 	// Animation for "big win"
