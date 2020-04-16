@@ -8,7 +8,7 @@ public class Hand {
 	public Hand(Deck deck) {
 		for (int i = 0; i < 5; i++) {
 			// Generate a random number between 1 and the size of the deck
-			int randomNumber = 1 + (int)(Math.random() * (((deck.getSize()) - 1) + 1));
+			int randomNumber = 1 + (int)(Math.random() * (((deck.getSize() - 1) - 1) + 1));
 			
 			// Add the randomly selected card to the hand
 			this.hand.add(deck.getCard(randomNumber));
@@ -16,6 +16,11 @@ public class Hand {
 			// Remove the selected card from the deck
 			deck.removeCard(randomNumber);
 		}
+	}
+	
+	// Get the whole hand array
+	public ArrayList<Card> getArray() {
+		return this.hand;
 	}
 	
 	// Get a specific card from the hand
@@ -35,8 +40,8 @@ public class Hand {
 	
 	// Print the hand to console
 	public void print() {
-        for (Card d:this.hand) {
-            System.out.println(d.getValue());
+        for (Card h:this.hand) {
+            System.out.println(h.getValue());
         }
 	}
 }

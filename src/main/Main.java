@@ -1,6 +1,7 @@
 package main;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,6 +19,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
@@ -27,18 +33,32 @@ public class Main extends Application {
 	// UI preparations
 	private Stage window;
 	private Scene titleScreen, settingsScreen, gameScreen;
+	
+	// Settings screen elements
 	private ComboBox<String> avatar = new ComboBox<>();
 	private ToggleGroup numOfDecks;
 	private RadioButton oneDeck = new RadioButton("1");
 	private RadioButton twoDeck = new RadioButton("2");
 	private RadioButton threeDeck = new RadioButton("3");
+	
+	// Game screen elements
+	private ToggleButton card1 = new ToggleButton("");
+	private ToggleButton card2 = new ToggleButton("");
+	private ToggleButton card3 = new ToggleButton("");
+	private ToggleButton card4 = new ToggleButton("");
+	private ToggleButton card5 = new ToggleButton("");
+	private ImageView card1Image = new ImageView();
+	private ImageView card2Image = new ImageView();
+	private ImageView card3Image = new ImageView();
+	private ImageView card4Image = new ImageView();
+	private ImageView card5Image = new ImageView();
 	private Label walletAmt = new Label("");
 	
 	// Game preparations
 	private Deck deck;				// Holds the deck for the game
 	private int deckParam = 1;		// Holds the numOfDecks selected by the user
 	private Hand hand;				// Holds the current hand
-	private int wallet = 200;			// Holds the user's current wallet amount
+	private int wallet = 200;		// Holds the user's current wallet amount
 	
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -92,13 +112,7 @@ public class Main extends Application {
 		// Create the play game button
 		Button playBtn = new Button("Play");
 		playBtn.setId("menuBtn");
-		playBtn.setOnAction(e -> {
-			// Generate the deck
-			deck = new Deck(deckParam);
-			
-			// Generate the first hand
-			hand = new Hand(deck);
-			
+		playBtn.setOnAction(e -> {			
 			// Change the scene to the game
 			window.setScene(gameScreen);
 		});
@@ -177,19 +191,59 @@ public class Main extends Application {
 		return settings;
 	}
 	
-	private GridPane getGameScreen() {
+	private GridPane getGameScreen() throws FileNotFoundException {
+		// Generate the deck
+		deck = new Deck(deckParam);
+		
+		// Generate the first hand
+		hand = new Hand(deck);
+		
 		// Create the game GridPane container
 		GridPane game = new GridPane();
 		game.setHgap(5);
 		game.setVgap(5);
 		
-		// Display the cards from the hand
+		// Set the cards to their respective images
+		final Image selected = new Image(new FileInputStream("image/card/b1fv.png"));
+		final Image card1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getValue() + ".png"));
+		final Image card2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getValue() + ".png"));
+		final Image card3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getValue() + ".png"));
+		final Image card4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getValue() + ".png"));
+		final Image card5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getValue() + ".png"));
+		
+		card1Image.setImage(card1Img);
+		card2Image.setImage(card2Img);
+		card3Image.setImage(card3Img);
+		card4Image.setImage(card4Img);
+		card5Image.setImage(card5Img);
+		
+		card1.setGraphic(card1Image);
+		card2.setGraphic(card2Image);
+		card3.setGraphic(card3Image);
+		card4.setGraphic(card4Image);
+		card5.setGraphic(card5Image);
+		
+		// TODO Figure out how this will work when using animations
+		// Handle what happens to the image when the card is selected or not selected
+		card1Image.imageProperty().bind(Bindings.when(card1.selectedProperty()).then(selected).otherwise(card1Img));
+		card2Image.imageProperty().bind(Bindings.when(card2.selectedProperty()).then(selected).otherwise(card2Img));
+		card3Image.imageProperty().bind(Bindings.when(card3.selectedProperty()).then(selected).otherwise(card3Img));
+		card4Image.imageProperty().bind(Bindings.when(card4.selectedProperty()).then(selected).otherwise(card4Img));
+		card5Image.imageProperty().bind(Bindings.when(card5.selectedProperty()).then(selected).otherwise(card5Img));
+		
+		// Add the cards to the container
+		// column, row
+		game.add(card1, 0, 0);
+		game.add(card2, 1, 0);
+		game.add(card3, 2, 0);
+		game.add(card4, 3, 0);
+		game.add(card5, 4, 0);
 		
 		// Display the user's avatar
 		
 		// Display the user's wallet amount
-		walletAmt.setText("$" + Integer.toString(wallet));
-		game.add(walletAmt, 0, 0);
+		//walletAmt.setText("$" + Integer.toString(wallet));
+		//game.add(walletAmt, 0, 0);
 		
 		// Set container content to center and return it
 		game.setAlignment(Pos.CENTER);
