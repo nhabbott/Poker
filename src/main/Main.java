@@ -45,6 +45,7 @@ public class Main extends Application {
 	private RadioButton threeDeck = new RadioButton("3");
 	
 	// Game screen elements
+	private BorderPane gamePane = new BorderPane();
 	private ToggleButton card1 = new ToggleButton("");
 	private ToggleButton card2 = new ToggleButton("");
 	private ToggleButton card3 = new ToggleButton("");
@@ -57,21 +58,21 @@ public class Main extends Application {
 	private ImageView card5Image = new ImageView();
 	private Label walletAmt = new Label("");
 	private Image avaImg;
+	private Button discardBtn = new Button("Discard");
+	private Button drawBtn = new Button("Draw");
 	
 	// Game preparations
 	private Deck deck;				// Holds the deck for the game
 	private int deckParam = 1;		// Holds the numOfDecks selected by the user
 	private Hand hand;				// Holds the current hand
 	private int wallet = 200;		// Holds the user's current wallet amount
-	private String avatarOption = "";		// Holds the chosen avatar	
+	private String avatarOption = "Red";		// Holds the chosen avatar	
 	
 	@Override
 	public void start(Stage stage) throws Exception {
 		try {
 			// Set window to the main stage
 			window = stage;
-			
-			avaImg = new Image(new FileInputStream("image/avatar/Red.png"));
 			
 			// Create the titleScreen scene
 			BorderPane titlePane = new BorderPane();
@@ -88,9 +89,8 @@ public class Main extends Application {
 			settingsScreen.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
 			
 			// Create the gameScreen scene
-			BorderPane gamePane = new BorderPane();
+			gamePane.setBottom(getGameButtons());
 			gamePane.setCenter(getCards());
-			gamePane.setTop(getGameInfo());
 			gameScreen = new Scene(gamePane, 600, 400);
 			gameScreen.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
 			
@@ -115,7 +115,14 @@ public class Main extends Application {
 		// Create the play game button
 		Button playBtn = new Button("Play");
 		playBtn.setId("menuBtn");
-		playBtn.setOnAction(e -> {			
+		playBtn.setOnAction(e -> {	
+			// Set the game info
+			try {
+				gamePane.setTop(getGameInfo());
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+			
 			// Change the scene to the game
 			window.setScene(gameScreen);
 		});
@@ -145,7 +152,7 @@ public class Main extends Application {
 		// Create the save settings button
 		Button saveBtn = new Button("Save");
 		saveBtn.setId("menuBtn");
-		saveBtn.setOnAction(e -> {
+		saveBtn.setOnAction((e) -> {
 			// Get the selected number of decks
 			RadioButton num = (RadioButton) numOfDecks.getSelectedToggle();
 			
@@ -154,8 +161,6 @@ public class Main extends Application {
 			
 			// Save the selected avatar
 			avatarOption = (String) avatarBox.getValue();
-			
-			// Create avatar image
 			try {
 				avaImg = new Image(new FileInputStream("image/avatar/" + avatarOption + ".png"));
 			} catch (FileNotFoundException e1) {
@@ -279,8 +284,8 @@ public class Main extends Application {
 		return game;
 	}
 	
-	// Returns a HBox with the wallet amount
-	private HBox getGameInfo() {
+	// Returns a HBox with the wallet amount & avatar
+	private HBox getGameInfo() throws FileNotFoundException {
 		// Create the wallet HBox container
 		HBox container = new HBox();
 		
@@ -292,17 +297,45 @@ public class Main extends Application {
 		container.getChildren().add(walletAmt);
 		
 		// Add the avatar
-		Rectangle square = new Rectangle(30, 30);
-		square.setFill(new ImagePattern(avaImg));
-		container.getChildren().add(square);
+		//Rectangle square = new Rectangle(30, 30);
+		//square.setFill(new ImagePattern(avaImg));
+		//container.getChildren().add(square);
 		
 		// Set spacing
 		container.setSpacing(500);
-		HBox.setMargin(square, new Insets(5, 5, 5, 5));
+		//HBox.setMargin(square, new Insets(5, 5, 5, 5));
 		HBox.setMargin(walletAmt, new Insets(5, -30, 5, 5));
 		
 		// Set container content to center and return it
 		container.setAlignment(Pos.TOP_CENTER);
+		return container;
+	}
+	
+	// Returns a HBox with the draw & discard buttons
+	private HBox getGameButtons() {
+		// Create the buttons HBox container
+		HBox container = new HBox();
+		
+		// Set draw button behaviors
+		drawBtn.setOnAction(e -> {
+			// Do stuff when draw btn is clicked
+		});
+		
+		// Set discard button behaviors
+		discardBtn.setOnAction(e -> {
+			// Do stuff when discard btn is clicked
+		});
+		
+		// Add the buttons
+		container.getChildren().addAll(drawBtn, discardBtn);
+		
+		// Set spacing
+		container.setSpacing(450);
+		HBox.setMargin(drawBtn, new Insets(5, 5, 30, 5));
+		HBox.setMargin(discardBtn, new Insets(5, 5, 30, 5));
+		
+		// Set container content to center and return it
+		container.setAlignment(Pos.BOTTOM_CENTER);
 		return container;
 	}
 	
