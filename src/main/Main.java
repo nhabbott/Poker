@@ -17,6 +17,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -24,10 +28,8 @@ import javafx.util.Duration;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.RotateTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.SequentialTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 
 public class Main extends Application {
 
@@ -36,8 +38,8 @@ public class Main extends Application {
 	private Scene titleScreen, settingsScreen, gameScreen;
 	
 	// Settings screen elements
-	private ComboBox<String> avatar = new ComboBox<>();
-	private ToggleGroup numOfDecks;
+	private ComboBox<String> avatarBox = new ComboBox<>();
+	private ToggleGroup numOfDecks = new ToggleGroup();
 	private RadioButton oneDeck = new RadioButton("1");
 	private RadioButton twoDeck = new RadioButton("2");
 	private RadioButton threeDeck = new RadioButton("3");
@@ -54,12 +56,14 @@ public class Main extends Application {
 	private ImageView card4Image = new ImageView();
 	private ImageView card5Image = new ImageView();
 	private Label walletAmt = new Label("");
+	private Image avaImg;
 	
 	// Game preparations
 	private Deck deck;				// Holds the deck for the game
 	private int deckParam = 1;		// Holds the numOfDecks selected by the user
 	private Hand hand;				// Holds the current hand
 	private int wallet = 200;		// Holds the user's current wallet amount
+	private String avatarOption = "";		// Holds the chosen avatar	
 	
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -67,11 +71,7 @@ public class Main extends Application {
 			// Set window to the main stage
 			window = stage;
 			
-			// Assign the deck selecting RadioButtons to the numOfDecks ToggleGroup and set the default to one deck
-			oneDeck.setToggleGroup(numOfDecks);
-			twoDeck.setToggleGroup(numOfDecks);
-			threeDeck.setToggleGroup(numOfDecks);
-			oneDeck.setSelected(true);
+			avaImg = new Image(new FileInputStream("image/avatar/Red.png"));
 			
 			// Create the titleScreen scene
 			BorderPane titlePane = new BorderPane();
@@ -90,8 +90,7 @@ public class Main extends Application {
 			// Create the gameScreen scene
 			BorderPane gamePane = new BorderPane();
 			gamePane.setCenter(getCards());
-			gamePane.setTop(getWalletAmt());
-			gamePane.setTop(getAvatar());
+			gamePane.setTop(getGameInfo());
 			gameScreen = new Scene(gamePane, 600, 400);
 			gameScreen.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
 			
@@ -152,6 +151,25 @@ public class Main extends Application {
 			
 			// Save the selected option
 			deckParam = Integer.parseInt(num.getText());
+			
+			// Save the selected avatar
+			avatarOption = (String) avatarBox.getValue();
+			
+			// Create avatar image
+			try {
+				avaImg = new Image(new FileInputStream("image/avatar/" + avatarOption + ".png"));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+			
+			// Alert the user
+			saveBtn.setText("Saved!");
+			Timeline resetSaveBtnText = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+				saveBtn.setText("Save");
+			}));
+			resetSaveBtnText.setDelay(Duration.seconds(2));
+			resetSaveBtnText.setCycleCount(1);
+			resetSaveBtnText.play();
 		});
 		
 		// Add the buttons to the HBox and return it
@@ -182,7 +200,19 @@ public class Main extends Application {
 		
 		// Create the avatar selection setting and label
 		settings.add(new Label("Avatar:"), 0, 0);
-		settings.add(avatar, 1, 0, 3, 1);
+		avatarBox.getItems().add("Red");
+		avatarBox.getItems().add("Green");
+		avatarBox.getItems().add("Blue");
+		avatarBox.getItems().add("Orange");
+		avatarBox.getItems().add("Yellow");
+		avatarBox.getItems().add("Purple");
+		settings.add(avatarBox, 1, 0, 3, 1);
+		
+		// Assign the deck selecting RadioButtons to the numOfDecks ToggleGroup and set the default to one deck
+		oneDeck.setToggleGroup(numOfDecks);
+		twoDeck.setToggleGroup(numOfDecks);
+		threeDeck.setToggleGroup(numOfDecks);
+		oneDeck.setSelected(true);
 		
 		// Create the numOfDecks selection setting and label
 		settings.add(new Label("Decks to Use:"), 0, 2);
@@ -250,87 +280,30 @@ public class Main extends Application {
 	}
 	
 	// Returns a HBox with the wallet amount
-	private HBox getWalletAmt() {
+	private HBox getGameInfo() {
 		// Create the wallet HBox container
-		HBox walletAmtContent = new HBox();
+		HBox container = new HBox();
 		
 		// Set the size and the text of the label to the current amount of the user's wallet
 		walletAmt.setText("Wallet: $" + Integer.toString(wallet));
 		walletAmt.setFont(new Font(15));
 		
 		// Add the label to the container
-		walletAmtContent.getChildren().add(walletAmt);
-		
-		// Set container content to center and return it
-		walletAmtContent.setAlignment(Pos.TOP_LEFT);
-		return walletAmtContent;
-	}
-	
-	// Returns a HBox with the chosen avatar
-	private HBox getAvatar() {
-		// Create the avatar HBox container
-		HBox avatar = new HBox();
+		container.getChildren().add(walletAmt);
 		
 		// Add the avatar
-		avatar.getChildren().add(new Label("Testing"));
+		Rectangle square = new Rectangle(30, 30);
+		square.setFill(new ImagePattern(avaImg));
+		container.getChildren().add(square);
 		
-		// Set container alignment to center and return it
-		avatar.setAlignment(Pos.TOP_RIGHT);
-		return avatar;
-	}
-	
-	// Animation for "big win"
-	// Make sure the text for the win amount and the circle have their opacity set to 0.0f
-	private SequentialTransition bigWinAnimation(Node circle, Node text) { 
-		// Fade in the circle and make the text visible
-		FadeTransition fadeIn = new FadeTransition();
-		fadeIn.setFromValue(0.0f);
-		fadeIn.setToValue(1.0f);
-		fadeIn.setCycleCount(1);
-		fadeIn.setNode(circle);
-		fadeIn.setDuration(Duration.seconds(3));
-		fadeIn.setOnFinished(e -> {
-			text.setOpacity(1.0f);
-		});
+		// Set spacing
+		container.setSpacing(500);
+		HBox.setMargin(square, new Insets(5, 5, 5, 5));
+		HBox.setMargin(walletAmt, new Insets(5, -30, 5, 5));
 		
-		// Emphasize the win amount
-		ScaleTransition scale = new ScaleTransition();  
-        scale.setByX(1.5f);  
-        scale.setByY(1.2f);  
-        scale.setCycleCount(4);  
-        scale.setAutoReverse(true);  
-        scale.setNode(text);
-        scale.setDuration(Duration.seconds(1));
-		
-		// Spin the win amount around twice
-		RotateTransition rotateTxt = new RotateTransition();
-		rotateTxt.setFromAngle(0f);
-		rotateTxt.setToAngle(360f);
-		rotateTxt.setCycleCount(2);
-		rotateTxt.setAutoReverse(true);
-		rotateTxt.setNode(text);
-		rotateTxt.setDuration(Duration.seconds(1.5f));
-		
-		// Make the text disappear
-		FadeTransition fadeOutTxt = new FadeTransition();
-		fadeOutTxt.setFromValue(1.0f);
-		fadeOutTxt.setToValue(0.0f);
-		fadeOutTxt.setCycleCount(1);
-		fadeOutTxt.setNode(text);
-		fadeOutTxt.setDuration(Duration.seconds(2));
-		
-		// Make circle disappear
-		FadeTransition fadeOutCirc = new FadeTransition();
-		fadeOutCirc.setFromValue(1.0f);
-		fadeOutCirc.setToValue(0.0f);
-		fadeOutCirc.setCycleCount(1);
-		fadeOutCirc.setNode(circle);
-		fadeOutCirc.setDuration(Duration.seconds(2));
-		
-		// Transition that contains all of the needed transitions; to be returned
-		SequentialTransition ret = new SequentialTransition(fadeIn, scale, rotateTxt, fadeOutTxt, fadeOutCirc);
-		
-		return ret;
+		// Set container content to center and return it
+		container.setAlignment(Pos.TOP_CENTER);
+		return container;
 	}
 	
 	// Launches the JavaFX application
