@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -35,7 +36,7 @@ public class Main extends Application {
 
 	// UI preparations
 	private Stage window;
-	private Scene titleScreen, settingsScreen, gameScreen;
+	private Scene titleScreen, settingsScreen, gameScreen, betScreen;
 	
 	// Settings screen elements
 	private ComboBox<String> avatarBox = new ComboBox<>();
@@ -57,15 +58,20 @@ public class Main extends Application {
 	private ImageView card4Image = new ImageView();
 	private ImageView card5Image = new ImageView();
 	private Label walletAmt = new Label("");
+	private Label betAmt = new Label("");
 	private Image avaImg;
 	private Button discardBtn = new Button("Discard");
 	private Button drawBtn = new Button("Draw");
+	private Button betBox = new Button("Bet");
+	private Button betBtn = new Button("Set Bet");
+	private Button betAllBtn = new Button("All in");
+	private TextField betAmount = new TextField();
 	
 	// Game preparations
-	private Deck deck;				// Holds the deck for the game
-	private int deckParam = 1;		// Holds the numOfDecks selected by the user
-	private Hand hand;				// Holds the current hand
-	private int wallet = 200;		// Holds the user's current wallet amount
+	private Deck deck;							// Holds the deck for the game
+	private int deckParam = 1;					// Holds the numOfDecks selected by the user
+	private Hand hand;							// Holds the current hand
+	private Wallet wallet = new Wallet(200);		// Holds the user's current wallet amount
 	private String avatarOption = "Red";		// Holds the chosen avatar	
 	
 	@Override
@@ -172,7 +178,7 @@ public class Main extends Application {
 			Timeline resetSaveBtnText = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
 				saveBtn.setText("Save");
 			}));
-			resetSaveBtnText.setDelay(Duration.seconds(2));
+			resetSaveBtnText.setDelay(Duration.seconds(1.5));
 			resetSaveBtnText.setCycleCount(1);
 			resetSaveBtnText.play();
 		});
@@ -290,11 +296,13 @@ public class Main extends Application {
 		HBox container = new HBox();
 		
 		// Set the size and the text of the label to the current amount of the user's wallet
-		walletAmt.setText("Wallet: $" + Integer.toString(wallet));
+		walletAmt.setText("Wallet: $" + wallet.toString());
 		walletAmt.setFont(new Font(15));
+		betAmt.setText("Bet: $" + Integer.toString(wallet.getBetAmount()));
+		betAmt.setFont(new Font(15));
 		
 		// Add the label to the container
-		container.getChildren().add(walletAmt);
+		container.getChildren().addAll(walletAmt, betAmt);
 		
 		// Add the avatar
 		//Rectangle square = new Rectangle(30, 30);
@@ -302,9 +310,10 @@ public class Main extends Application {
 		//container.getChildren().add(square);
 		
 		// Set spacing
-		container.setSpacing(500);
+		container.setSpacing(430);
 		//HBox.setMargin(square, new Insets(5, 5, 5, 5));
-		HBox.setMargin(walletAmt, new Insets(5, -30, 5, 5));
+		HBox.setMargin(walletAmt, new Insets(5, -20, 5, 5));
+		HBox.setMargin(betAmt, new Insets(5, 10, 5, 5));
 		
 		// Set container content to center and return it
 		container.setAlignment(Pos.TOP_CENTER);
@@ -321,22 +330,80 @@ public class Main extends Application {
 			// Do stuff when draw btn is clicked
 		});
 		
+		betBox.setOnAction(e -> {
+			// Init betScreen scene
+			getBetButtons();
+			
+			window.setScene(betScreen);
+		});
+		
 		// Set discard button behaviors
 		discardBtn.setOnAction(e -> {
 			// Do stuff when discard btn is clicked
 		});
 		
 		// Add the buttons
-		container.getChildren().addAll(drawBtn, discardBtn);
+		container.getChildren().addAll(drawBtn, betBox, discardBtn);
 		
 		// Set spacing
-		container.setSpacing(450);
-		HBox.setMargin(drawBtn, new Insets(5, 5, 30, 5));
-		HBox.setMargin(discardBtn, new Insets(5, 5, 30, 5));
+		container.setSpacing(200);
+		HBox.setMargin(drawBtn, new Insets(5, 5, 5, 5));
+		HBox.setMargin(discardBtn, new Insets(5, 5, 5, 5));
+		HBox.setMargin(betBox, new Insets(5, 5, 5, 5));
 		
 		// Set container content to center and return it
 		container.setAlignment(Pos.BOTTOM_CENTER);
 		return container;
+	}
+	
+	// Create bet screen
+	private void getBetButtons() {
+		// Create the buttons containers
+		BorderPane pane = new BorderPane();
+		HBox container1 = new HBox();
+		HBox container2 = new HBox();
+		
+		betBtn.setOnAction(e -> {
+			if (Integer.parseInt(betAmount.getText()) > wallet.getMax()) {
+				betBtn.setText("Enter amt > " + wallet.getMax());
+				Timeline resetBetBtnText = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+					betBtn.setText("Set Bet");
+				}));
+				resetBetBtnText.setDelay(Duration.seconds(1.5));
+				resetBetBtnText.setCycleCount(1);
+				resetBetBtnText.play();
+				return;
+			}
+			
+			wallet.setBetAmount(Integer.parseInt(betAmount.getText()));
+			betAmt.setText("Bet: $" + Integer.toString(wallet.getBetAmount()));
+			window.setScene(gameScreen);
+			window.show();
+		});
+		
+		betAllBtn.setOnAction(e -> {
+			int amount = (int) wallet.getMax();
+			betAmount.setText(Integer.toString(amount));
+		});
+		
+		// Add the buttons
+		container1.getChildren().addAll(betBtn, betAllBtn);
+		container2.getChildren().addAll((new Label("Bet Amount: ")), betAmount);
+		
+		// Set spacing
+		container1.setSpacing(200);
+		HBox.setMargin(betBtn, new Insets(5, 5, 5, 5));
+		HBox.setMargin(betAllBtn, new Insets(5, 5, 5, 5));
+		
+		// Set container content to center and return it
+		container1.setAlignment(Pos.CENTER);
+		container2.setAlignment(Pos.BOTTOM_CENTER);
+		
+		// Add to pane
+		pane.setCenter(container2);
+		pane.setBottom(container1);
+		pane.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
+		betScreen = new Scene(pane, 600, 400);
 	}
 	
 	// Launches the JavaFX application
