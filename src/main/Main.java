@@ -23,6 +23,7 @@ import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -56,7 +57,7 @@ public class Main extends Application {
 	private Label betAmt = new Label("");
 	private Image avaImg;
 	private Button discardBtn = new Button("Discard");
-	private Button drawBtn = new Button("Draw");
+	private Button dealBtn = new Button("Deal");
 	private Button betBox = new Button("Bet");
 	private Button betBtn = new Button("Set Bet");
 	private Button betAllBtn = new Button("All in");
@@ -321,34 +322,8 @@ public class Main extends Application {
 		HBox container = new HBox();
 		
 		// Set draw button behaviors
-		drawBtn.setOnAction(e -> 
-		{
-		if(card1.isSelected()) {
-				return;
-			}
-			else {
-			}
-			if(card2.isSelected()) {
-				return;
-			}
-			else {
-			}
-			if(card3.isSelected()) {
-				return;
-			}
-			else {
-			}
-			if(card4.isSelected()) {
-				return;
-			}
-			else {	
-			}
-			if(card5.isSelected()) {
-				return;
-			}
-			else {
-			}
-			// Do stuff when draw btn is clicked
+		dealBtn.setOnAction(e -> {
+			
 		});
 		
 		betBox.setOnAction(e -> {
@@ -359,15 +334,85 @@ public class Main extends Application {
 		
 		// Set discard button behaviors
 		discardBtn.setOnAction(e -> {
-			// Do stuff when discard btn is clicked
+			ArrayList<Integer> toRemove = new ArrayList<Integer>();	// Holds card indexes to remove
+			
+			if(card1.isSelected()) {
+				toRemove.add(0);
+			}
+				
+			if(card2.isSelected()) {
+				toRemove.add(1);
+			}
+			
+			if(card3.isSelected()) {
+				toRemove.add(2);
+			}
+			
+			if(card4.isSelected()) {
+				toRemove.add(3);
+			}
+			
+			if(card5.isSelected()) {
+				toRemove.add(4);
+			}
+			
+			// Remove selected cards from hand
+			for (int i = toRemove.size() - 1; i >= 0; i--) {
+			    hand.removeCard(i);
+			}
+			
+			// Provide new cards
+			for (int i:toRemove) {
+				hand.addCardAtIndex(i, deck.getRandomCard());
+			}
+			
+			// Set the cards to their respective images
+			try {
+				final Image selected = new Image(new FileInputStream("image/card/b1fv.png"));
+				final Image newCard1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getValue() + ".png"));
+				final Image newCard2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getValue() + ".png"));
+				final Image newCard3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getValue() + ".png"));
+				final Image newCard4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getValue() + ".png"));
+				final Image newCard5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getValue() + ".png"));
+				
+				final ImageView one = new ImageView(newCard1Img);
+				final ImageView two = new ImageView(newCard2Img);
+				final ImageView three = new ImageView(newCard3Img);
+				final ImageView four = new ImageView(newCard4Img);
+				final ImageView five = new ImageView(newCard5Img);
+				
+				card1.setGraphic(one);
+				card2.setGraphic(two);
+				card3.setGraphic(three);
+				card4.setGraphic(four);
+				card5.setGraphic(five);
+				
+				one.imageProperty().bind(Bindings.when(card1.selectedProperty()).then(selected).otherwise(newCard1Img));
+				two.imageProperty().bind(Bindings.when(card2.selectedProperty()).then(selected).otherwise(newCard2Img));
+				three.imageProperty().bind(Bindings.when(card3.selectedProperty()).then(selected).otherwise(newCard3Img));
+				four.imageProperty().bind(Bindings.when(card4.selectedProperty()).then(selected).otherwise(newCard4Img));
+				five.imageProperty().bind(Bindings.when(card5.selectedProperty()).then(selected).otherwise(newCard5Img));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+	
+			// Flip cards again
+			card1.setSelected(false);
+			card2.setSelected(false);
+			card3.setSelected(false);
+			card4.setSelected(false);
+			card5.setSelected(false);
+			
+			// Stop user from discarding more than once
+			discardBtn.setDisable(true);
 		});
 		
 		// Add the buttons
-		container.getChildren().addAll(drawBtn, betBox, discardBtn);
+		container.getChildren().addAll(dealBtn, betBox, discardBtn);
 		
 		// Set spacing
 		container.setSpacing(200);
-		HBox.setMargin(drawBtn, new Insets(5, 5, 5, 5));
+		HBox.setMargin(dealBtn, new Insets(5, 5, 5, 5));
 		HBox.setMargin(discardBtn, new Insets(5, 5, 5, 5));
 		HBox.setMargin(betBox, new Insets(5, 5, 5, 5));
 		
