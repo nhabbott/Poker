@@ -60,14 +60,15 @@ public class Main extends Application {
 	private Button dealBtn = new Button("Deal");
 	private Button betBox = new Button("Bet");
 	private Button betBtn = new Button("Set Bet");
-	private Button betAllBtn = new Button("All in");
+	private Button betOneBtn = new Button("Bet $1");
+	private Button betAllBtn = new Button("Bet Max");
 	private TextField betAmount = new TextField();
 	
 	// Game preparations
 	private Deck deck;							// Holds the deck for the game
 	private int deckParam = 1;					// Holds the numOfDecks selected by the user
 	private Hand hand;							// Holds the current hand
-	private Wallet wallet = new Wallet(200);		// Holds the user's current wallet amount
+	private Wallet wallet = new Wallet(200);	// Holds the user's current wallet amount
 	private String avatarOption = "Red";		// Holds the chosen avatar	
 	
 	@Override
@@ -451,18 +452,23 @@ public class Main extends Application {
 			betAmount.setText(Integer.toString(amount));
 		});
 		
+		betOneBtn.setOnAction(e -> {
+			betAmount.setText("1");
+		});
+		
 		// Add the buttons
-		container1.getChildren().addAll(betBtn, betAllBtn);
+		container1.getChildren().addAll(betBtn, betOneBtn, betAllBtn);
 		container2.getChildren().addAll((new Label("Bet Amount: ")), betAmount);
 		
 		// Set spacing
 		container1.setSpacing(200);
 		HBox.setMargin(betBtn, new Insets(5, 5, 5, 5));
+		HBox.setMargin(betOneBtn, new Insets(5, 5, 5, 5));
 		HBox.setMargin(betAllBtn, new Insets(5, 5, 5, 5));
 		
 		// Set container content to center and return it
-		container1.setAlignment(Pos.CENTER);
-		container2.setAlignment(Pos.BOTTOM_CENTER);
+		container1.setAlignment(Pos.BOTTOM_CENTER);
+		container2.setAlignment(Pos.CENTER);
 		
 		// Add to pane
 		pane.setCenter(container2);
