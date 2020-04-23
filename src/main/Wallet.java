@@ -29,6 +29,7 @@ public class Wallet {
 		return this.betAmount;
 	}
 	
+	// changes the amount to a string and returns it
 	public String toString() {
 		return Float.toString(this.amount);
 	}

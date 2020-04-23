@@ -33,6 +33,11 @@ public class Hand {
 		this.hand.add(card);
 	}
 	
+	// Adds a card at the specified index
+	public void addCardAtIndex(int index, Card card) {
+		this.hand.add(index, card);
+	}
+	
 	// Remove a specific card from the hand
 	public void removeCard(int index) {
 		this.hand.remove(index);

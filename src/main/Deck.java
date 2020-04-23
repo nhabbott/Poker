@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Deck {
 	// Holds the cards for the game
@@ -34,6 +35,16 @@ public class Deck {
 	// Get the size of the deck
 	public int getSize() {
 		return this.deck.size();
+	}
+	
+	// TODO Comments
+	// Returns a random card from the deck and then removes it
+	public Card getRandomCard() {
+		Random random = new Random();
+		int ranIndex = random.nextInt(this.deck.size());
+		Card card = this.deck.get(ranIndex);
+		this.deck.remove(ranIndex);
+		return card;
 	}
 	
 	// Print the deck to console
