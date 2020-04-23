@@ -321,7 +321,33 @@ public class Main extends Application {
 		HBox container = new HBox();
 		
 		// Set draw button behaviors
-		drawBtn.setOnAction(e -> {
+		drawBtn.setOnAction(e -> 
+		{
+		if(card1.isSelected()) {
+				return;
+			}
+			else {
+			}
+			if(card2.isSelected()) {
+				return;
+			}
+			else {
+			}
+			if(card3.isSelected()) {
+				return;
+			}
+			else {
+			}
+			if(card4.isSelected()) {
+				return;
+			}
+			else {	
+			}
+			if(card5.isSelected()) {
+				return;
+			}
+			else {
+			}
 			// Do stuff when draw btn is clicked
 		});
 		
