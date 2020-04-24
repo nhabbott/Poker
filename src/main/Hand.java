@@ -1,6 +1,11 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Hand {
 	private ArrayList<Card> hand = new ArrayList<Card>();
@@ -43,7 +48,7 @@ public class Hand {
 		this.hand.remove(index);
 	}
 	
-	public boolean isWinner() {
+	public String isWinner() {
 		boolean sameSuits = false;
 		
 		// Counters for each of the suits of the card
@@ -70,7 +75,45 @@ public class Hand {
 			sameSuits = true;
 		}
 		
-		return false;
+		// Determine if hand is royal flush
+		if (sameSuits) {
+			int yes = 0;	// Holds the number of needed cards that were found
+			
+			for (Card c:hand) {
+				if (c.getValue().equals("ace")) {
+					yes++;
+				} else if (c.getValue().equals("king")) {
+					yes++;
+				} else if (c.getValue().equals("queen")) {
+					yes++;
+				} else if (c.getValue().equals("jack")) {
+					yes++;
+				} else if (c.getValue().equals("10")) {
+					yes++;
+				}
+			}
+			
+			if (yes == 5) {
+				return "royal-flush";
+			}
+		}
+		
+		// Determine if hand is four of kind
+		ArrayList<String> cs = new ArrayList<String>();		// Holds each card's value
+		for (Card c:hand) {
+			cs.add(c.getValue());
+		}
+		
+		for (Card c:hand) {
+			
+		}
+		
+		// Determine if hand is straight flush
+		if (sameSuits) {
+			return "straight-flush";
+		}
+		
+		return "none";
 	}
 	
 	// Print the hand to console
