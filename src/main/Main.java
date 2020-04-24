@@ -326,7 +326,61 @@ public class Main extends Application {
 		
 		// Set draw button behaviors
 		dealBtn.setOnAction(e -> {
+			wallet.setAmount(wallet.getAmount() - wallet.getBetAmount());
+			if (hand.isRoyalFlush()) {
+				wallet.setAmount(wallet.getAmount() + (wallet.getBetAmount() * 3));
+			} else if (hand.isStraightFlush()) {
+				wallet.setAmount(wallet.getAmount() + (wallet.getBetAmount() * 2));
+			} else if (hand.isFour()) {
+				wallet.setAmount(wallet.getAmount() + (wallet.getBetAmount() * 2));
+			} else if (hand.allSameSuit()) {
+				wallet.setAmount(wallet.getAmount() + (wallet.getBetAmount() * 2));
+			}
 			
+			hand = new Hand(deck);
+			
+			// Set the cards to their respective images
+			try {
+				final Image selected = new Image(new FileInputStream("image/card/b1fv.png"));
+				final Image newCard1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getNumber() + ".png"));
+				final Image newCard2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getNumber() + ".png"));
+				final Image newCard3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getNumber() + ".png"));
+				final Image newCard4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getNumber() + ".png"));
+				final Image newCard5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getNumber() + ".png"));
+				
+				final ImageView one = new ImageView(newCard1Img);
+				final ImageView two = new ImageView(newCard2Img);
+				final ImageView three = new ImageView(newCard3Img);
+				final ImageView four = new ImageView(newCard4Img);
+				final ImageView five = new ImageView(newCard5Img);
+				
+				card1.setGraphic(one);
+				card2.setGraphic(two);
+				card3.setGraphic(three);
+				card4.setGraphic(four);
+				card5.setGraphic(five);
+				
+				one.imageProperty().bind(Bindings.when(card1.selectedProperty()).then(selected).otherwise(newCard1Img));
+				two.imageProperty().bind(Bindings.when(card2.selectedProperty()).then(selected).otherwise(newCard2Img));
+				three.imageProperty().bind(Bindings.when(card3.selectedProperty()).then(selected).otherwise(newCard3Img));
+				four.imageProperty().bind(Bindings.when(card4.selectedProperty()).then(selected).otherwise(newCard4Img));
+				five.imageProperty().bind(Bindings.when(card5.selectedProperty()).then(selected).otherwise(newCard5Img));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+	
+			// Flip cards again
+			card1.setSelected(false);
+			card2.setSelected(false);
+			card3.setSelected(false);
+			card4.setSelected(false);
+			card5.setSelected(false);
+			
+			// Add money
+			walletAmt.setText("Wallet: $" + Integer.toString((int)wallet.getAmount()));
+			
+			// Enable discard
+			discardBtn.setDisable(false);
 		});
 		
 		betBox.setOnAction(e -> {
@@ -360,7 +414,7 @@ public class Main extends Application {
 			}
 			
 			// Remove selected cards from hand
-			for (int i = toRemove.size() - 1; i >= 0; i--) {
+			for (int i = toRemove.size(); i > 0; i--) {
 			    hand.removeCard(i);
 			}
 			
