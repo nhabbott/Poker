@@ -3,16 +3,23 @@ package main;
 public class Card {
 	private String suit;	// Holds the suit of the card
 	private int value;		// Holds the numeric value of the card
+	private int number; 	// Holds the number of the card in regards to the image names
 	
 	// Card constructor
-	public Card(int value, String suit) {
+	public Card(int value, int number, String suit) {
 		this.value = value;
+		this.number = number;
 		this.suit = suit;
 	}
 	
 	// Get the card's numerical value
 	public int getValue() {
 		return this.value;
+	}
+	
+	// Get the card's number
+	public int getNumber() {
+		return this.number;
 	}
 	
 	// Get the card's suit

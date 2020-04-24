@@ -12,7 +12,8 @@ public class Deck {
 	public Deck(int numOfDecks) {
 		// Add cards to the deck
 		for (int i = 0; i < (numOfDecks * 52); i++) {
-			Card card = new Card((i + 1), "placeHolder");
+			int value = 0;
+			Card card = new Card(value, (i + 1), "placeHolder");
 			deck.add(card);
 		}
 	}
@@ -37,13 +38,13 @@ public class Deck {
 		return this.deck.size();
 	}
 	
-	// TODO Comments
 	// Returns a random card from the deck and then removes it
 	public Card getRandomCard() {
-		Random random = new Random();
-		int ranIndex = random.nextInt(this.deck.size());
-		Card card = this.deck.get(ranIndex);
-		this.deck.remove(ranIndex);
+		Random random = new Random();						// Creates new random number generator
+		int ranIndex = random.nextInt(this.deck.size());	// Holds random index
+		Card card = this.deck.get(ranIndex);				// Holds the selected card
+		
+		this.deck.remove(ranIndex);							// Remove the selected card from the deck
 		return card;
 	}
 	

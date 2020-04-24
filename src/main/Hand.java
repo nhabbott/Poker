@@ -43,6 +43,36 @@ public class Hand {
 		this.hand.remove(index);
 	}
 	
+	public boolean isWinner() {
+		boolean sameSuits = false;
+		
+		// Counters for each of the suits of the card
+		int heart = 0;
+		int diamond = 0;
+		int spade = 0;
+		int club = 0;
+		
+		// Loop through and count suits
+		for (int i = 0; i < this.hand.size(); i ++) {
+			if (hand.get(i).getSuit() == "heart") {
+				heart++;
+			} else if (hand.get(i).getSuit() == "diamond") {
+				diamond++;
+			} else if (hand.get(i).getSuit() == "spade") {
+				spade++;
+			} else if (hand.get(i).getSuit() == "club") {
+				club++;
+			}
+ 		}
+		
+		// Determine if cards are all same suit
+		if (heart == 5 || diamond == 5 || spade == 5 || club == 5) {
+			sameSuits = true;
+		}
+		
+		return false;
+	}
+	
 	// Print the hand to console
 	public void print() {
         for (Card h:this.hand) {

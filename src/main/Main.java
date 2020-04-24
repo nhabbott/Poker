@@ -57,7 +57,7 @@ public class Main extends Application {
 	private Label betAmt = new Label("");
 	private Image avaImg;
 	private Button discardBtn = new Button("Discard");
-	private Button dealBtn = new Button("Deal");
+	private Button dealBtn = new Button("Set bet first");
 	private Button betBox = new Button("Bet");
 	private Button betBtn = new Button("Set Bet");
 	private Button betOneBtn = new Button("Bet $1");
@@ -248,11 +248,11 @@ public class Main extends Application {
 		
 		// Set the cards to their respective images
 		final Image selected = new Image(new FileInputStream("image/card/b1fv.png"));
-		final Image card1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getValue() + ".png"));
-		final Image card2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getValue() + ".png"));
-		final Image card3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getValue() + ".png"));
-		final Image card4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getValue() + ".png"));
-		final Image card5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getValue() + ".png"));
+		final Image card1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getNumber() + ".png"));
+		final Image card2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getNumber() + ".png"));
+		final Image card3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getNumber() + ".png"));
+		final Image card4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getNumber() + ".png"));
+		final Image card5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getNumber() + ".png"));
 		
 		card1Image.setImage(card1Img);
 		card2Image.setImage(card2Img);
@@ -266,7 +266,6 @@ public class Main extends Application {
 		card4.setGraphic(card4Image);
 		card5.setGraphic(card5Image);
 		
-		// TODO Figure out how this will work when using animations
 		// Handle what happens to the image when the card is selected or not selected
 		card1Image.imageProperty().bind(Bindings.when(card1.selectedProperty()).then(selected).otherwise(card1Img));
 		card2Image.imageProperty().bind(Bindings.when(card2.selectedProperty()).then(selected).otherwise(card2Img));
@@ -317,10 +316,13 @@ public class Main extends Application {
 		return container;
 	}
 	
-	// Returns a HBox with the draw & discard buttons
+	// Returns a HBox with the draw, bet, & discard buttons
 	private HBox getGameButtons() {
 		// Create the buttons HBox container
 		HBox container = new HBox();
+		
+		// Disable dealBtn
+		dealBtn.setDisable(true);
 		
 		// Set draw button behaviors
 		dealBtn.setOnAction(e -> {
@@ -370,11 +372,11 @@ public class Main extends Application {
 			// Set the cards to their respective images
 			try {
 				final Image selected = new Image(new FileInputStream("image/card/b1fv.png"));
-				final Image newCard1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getValue() + ".png"));
-				final Image newCard2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getValue() + ".png"));
-				final Image newCard3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getValue() + ".png"));
-				final Image newCard4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getValue() + ".png"));
-				final Image newCard5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getValue() + ".png"));
+				final Image newCard1Img = new Image(new FileInputStream("image/card/" + hand.getCard(0).getNumber() + ".png"));
+				final Image newCard2Img = new Image(new FileInputStream("image/card/" + hand.getCard(1).getNumber() + ".png"));
+				final Image newCard3Img = new Image(new FileInputStream("image/card/" + hand.getCard(2).getNumber() + ".png"));
+				final Image newCard4Img = new Image(new FileInputStream("image/card/" + hand.getCard(3).getNumber() + ".png"));
+				final Image newCard5Img = new Image(new FileInputStream("image/card/" + hand.getCard(4).getNumber() + ".png"));
 				
 				final ImageView one = new ImageView(newCard1Img);
 				final ImageView two = new ImageView(newCard2Img);
@@ -440,6 +442,10 @@ public class Main extends Application {
 				resetBetBtnText.play();
 				return;
 			}
+			
+			// Re-enable dealBtn
+			dealBtn.setDisable(false);
+			dealBtn.setText("Deal");
 			
 			wallet.setBetAmount(Integer.parseInt(betAmount.getText()));
 			betAmt.setText("Bet: $" + Integer.toString(wallet.getBetAmount()));
