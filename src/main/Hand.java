@@ -1,11 +1,7 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Hand {
 	private ArrayList<Card> hand = new ArrayList<Card>();
@@ -48,7 +44,7 @@ public class Hand {
 		this.hand.remove(index);
 	}
 	
-	public String isWinner() {
+	public boolean allSameSuit() {
 		boolean sameSuits = false;
 		
 		// Counters for each of the suits of the card
@@ -73,10 +69,14 @@ public class Hand {
 		// Determine if cards are all same suit
 		if (heart == 5 || diamond == 5 || spade == 5 || club == 5) {
 			sameSuits = true;
+			return sameSuits;
+		} else {
+			return false;
 		}
-		
-		// Determine if hand is royal flush
-		if (sameSuits) {
+	}
+	
+	public boolean isRoyalFlush() {
+		if (this.allSameSuit()) {
 			int yes = 0;	// Holds the number of needed cards that were found
 			
 			for (Card c:hand) {
@@ -94,26 +94,37 @@ public class Hand {
 			}
 			
 			if (yes == 5) {
-				return "royal-flush";
+				return true;
+			} else {
+				return false;
 			}
+		} else {
+			return false;
 		}
-		
-		// Determine if hand is four of kind
+	}
+	
+	public boolean isStraightFlush() {
+		if (this.allSameSuit()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	// Determine if hand is four of kind
+	public boolean isFour() {
 		ArrayList<String> cs = new ArrayList<String>();		// Holds each card's value
 		for (Card c:hand) {
 			cs.add(c.getValue());
 		}
 		
 		for (Card c:hand) {
-			
+			if (Collections.frequency(cs, (c.getValue())) == 4) {
+				return true;
+			}
 		}
 		
-		// Determine if hand is straight flush
-		if (sameSuits) {
-			return "straight-flush";
-		}
-		
-		return "none";
+		return false;
 	}
 	
 	// Print the hand to console
